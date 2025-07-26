@@ -10,7 +10,7 @@ This tool is ideal for students, researchers, and network engineers seeking an a
 ---
 
 ## 2. Key Features
-- 🎛️ **Interactive Web GUI** using HTML and Bootstrap.
+- 🎛️ **Interactive Web GUI** using HTML and Javascript.
 - 📡 **Protocol Simulation** for AODV, DSDV, and DSR.
 - 🤖 **Machine Learning Prediction** using a Random Forest Classifier.
 - 📊 **Performance Metrics**:
@@ -28,7 +28,7 @@ This tool is ideal for students, researchers, and network engineers seeking an a
 | Component         | Technology                      | Purpose                                           |
 |------------------|----------------------------------|---------------------------------------------------|
 | Web Framework     | Flask                            | Backend API server                                |
-| Frontend          | HTML, CSS, JavaScript, Bootstrap | Web-based user interface                          |
+| Frontend          | HTML, CSS, JavaScript | Web-based user interface                          |
 | Simulation Engine | SimPy, NetworkX                  | Discrete-event simulation and topology management |
 | ML Module         | Scikit-learn, Pandas, Joblib     | Prediction of best protocol                       |
 | Visualization     | Matplotlib                       | Network topology plotting                         |
