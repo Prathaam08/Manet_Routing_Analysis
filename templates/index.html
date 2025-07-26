@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MANET Simulation Tool</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="text-center">MANET Routing Protocol Simulator 🔬</h1>
+        <hr>
+
+        <div class="card p-4">
+            <h4>Simulation Parameters</h4>
+            <form id="simForm">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="num_nodes" class="form-label">Number of Nodes</label>
+                        <input type="number" class="form-control" id="num_nodes" value="50" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="area" class="form-label">Network Area (m x m)</label>
+                        <input type="number" class="form-control" id="area" value="1000" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="sim_time" class="form-label">Simulation Time (s)</label>
+                        <input type="number" class="form-control" id="sim_time" value="100" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="mobility" class="form-label">Mobility Speed (m/s)</label>
+                        <input type="number" class="form-control" id="mobility" value="10" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="traffic_load" class="form-label">Traffic Load (pkts/s)</label>
+                        <input type="number" class="form-control" id="traffic_load" value="15" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="energy" class="form-label">Energy Budget (Joules)</label>
+                        <input type="number" class="form-control" id="energy" value="150" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="protocol" class="form-label">Routing Protocol</label>
+                    <select id="protocol" class="form-select">
+                        <option value="ml_predict">🤖 Auto-Select (via ML)</option>
+                        <option value="AODV">AODV</option>
+                        <option value="DSDV">DSDV</option>
+                        <option value="DSR">DSR</option>
+                        <option value="all">Compare All</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Run Simulation</button>
+            </form>
+        </div>
+
+        <div id="results" class="mt-4" style="display:none;">
+            <h3>Simulation Results ✨</h3>
+            <div class="alert alert-info" id="mlPrediction"></div>
+            <div id="resultCards" class="row"></div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

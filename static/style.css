@@ -1,0 +1,153 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+.container {
+    background-color: #ffffff;
+    padding: 30px 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px;
+    box-sizing: border-box;
+    margin-top: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    font-size: 2em;
+}
+
+p {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #555;
+}
+
+.result-box {
+    padding: 15px 25px;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: bold;
+    font-size: 1.2em;
+    border: 1px solid transparent;
+}
+
+.result-box h2 {
+    margin: 0;
+    color: #333;
+}
+
+.result-box span {
+    font-size: 1.4em;
+    margin-left: 10px;
+}
+
+/* Specific colors for performance classes */
+.high {
+    background-color: #d4edda;
+    border-color: #28a745;
+    color: #155724;
+}
+
+.medium {
+    background-color: #fff3cd;
+    border-color: #ffc107;
+    color: #856404;
+}
+
+.low {
+    background-color: #f8d7da;
+    border-color: #dc3545;
+    color: #721c24;
+}
+
+.error-box {
+    background-color: #f8d7da;
+    border: 1px solid #dc3545;
+    color: #721c24;
+    padding: 15px 25px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+fieldset {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+legend {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #34495e;
+    padding: 0 10px;
+    margin-left: -10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #4a4a4a;
+}
+
+.form-group input[type="number"],
+.form-group select {
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    width: calc(100% - 30px); /* Account for padding */
+    box-sizing: border-box;
+}
+
+.form-group input[type="number"]:focus,
+.form-group select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+button[type="submit"] {
+    background-color: #28a745; /* Green for submit */
+    color: white;
+    padding: 15px 25px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    align-self: center;
+    width: 50%;
+    max-width: 300px;
+}
+
+button[type="submit"]:hover {
+    background-color: #218838;
+}

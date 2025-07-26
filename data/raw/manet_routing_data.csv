@@ -1,0 +1,21 @@
+num_nodes,mobility_model,node_speed_mps,pause_time_s,simulation_area_m2,routing_protocol,traffic_type,packet_size_bytes,transmission_range_m,packet_delivery_ratio,throughput_kbps,end_to_end_delay_ms,packet_loss_rate,routing_overhead,Network_Performance_Class
+36,Random Waypoint,8,6,700000,DSDV,FTP,1024,220,0.85,640,85,0.15,980,Medium
+55,Random Direction,6,8,900000,OLSR,FTP,512,230,0.68,270,160,0.32,1400,Low
+41,Random Direction,10,2,880000,AODV,FTP,600,250,0.91,760,58,0.09,1180,High
+47,Random Waypoint,7,7,720000,DSDV,CBR,1024,240,0.87,690,80,0.13,1070,Medium
+30,Random Direction,5,10,250000,DSDV,FTP,1024,200,0.70,300,150,0.30,800,Low
+51,Random Waypoint,11,0,990000,AODV,CBR,768,260,0.96,810,48,0.04,1280,High
+39,Random Direction,6,11,580000,OLSR,FTP,1500,200,0.66,260,185,0.34,890,Low
+45,Random Waypoint,8,5,750000,OLSR,CBR,768,220,0.88,700,75,0.12,1100,Medium
+38,Random Waypoint,10,3,650000,DSDV,CBR,768,250,0.90,720,70,0.10,1150,High
+60,Random Direction,12,0,1000000,AODV,FTP,1500,280,0.65,250,180,0.35,1500,Low
+43,Random Waypoint,8,5,730000,DSDV,CBR,1024,240,0.86,660,78,0.14,1010,Medium
+33,Random Waypoint,6,9,600000,OLSR,FTP,768,210,0.67,310,155,0.33,970,Low
+48,Random Waypoint,11,1,950000,OLSR,CBR,600,260,0.89,780,65,0.11,1300,Medium
+40,Random Waypoint,9,2,800000,AODV,CBR,1024,240,0.92,750,60,0.08,1250,High
+42,Random Direction,7,12,550000,AODV,FTP,1024,200,0.72,320,140,0.28,1000,Low
+35,Random Waypoint,7,15,500000,DSDV,CBR,600,210,0.80,550,90,0.20,950,Medium
+50,Random Waypoint,10,0,1000000,AODV,CBR,512,250,0.95,800,50,0.05,1200,High
+44,Random Direction,8,10,790000,DSDV,FTP,512,220,0.69,280,170,0.31,860,Low
+46,Random Waypoint,9,5,700000,OLSR,CBR,1024,230,0.90,730,68,0.10,1120,Medium
+52,Random Direction,9,4,850000,AODV,CBR,512,270,0.94,790,55,0.06,1220,High
