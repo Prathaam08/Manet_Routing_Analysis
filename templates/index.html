@@ -1,69 +1,147 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>MANET Simulation Tool</title>
+    <title>MANET Simulation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <div class="container mt-4">
-        <h1 class="text-center">MANET Routing Protocol Simulator 🔬</h1>
-        <hr>
-
-        <div class="card p-4">
-            <h4>Simulation Parameters</h4>
-            <form id="simForm">
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label for="num_nodes" class="form-label">Number of Nodes</label>
-                        <input type="number" class="form-control" id="num_nodes" value="50" required>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="area" class="form-label">Network Area (m x m)</label>
-                        <input type="number" class="form-control" id="area" value="1000" required>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="sim_time" class="form-label">Simulation Time (s)</label>
-                        <input type="number" class="form-control" id="sim_time" value="100" required>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label for="mobility" class="form-label">Mobility Speed (m/s)</label>
-                        <input type="number" class="form-control" id="mobility" value="10" required>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="traffic_load" class="form-label">Traffic Load (pkts/s)</label>
-                        <input type="number" class="form-control" id="traffic_load" value="15" required>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="energy" class="form-label">Energy Budget (Joules)</label>
-                        <input type="number" class="form-control" id="energy" value="150" required>
-                    </div>
-                </div>
-
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Control Panel -->
+            <div class="col-md-4 bg-light p-4">
+                <h2><i class="fas fa-sliders-h"></i> Simulation Controls</h2>
+                
                 <div class="mb-3">
-                    <label for="protocol" class="form-label">Routing Protocol</label>
+                    <label class="form-label">Protocol Selection</label>
                     <select id="protocol" class="form-select">
-                        <option value="ml_predict">🤖 Auto-Select (via ML)</option>
                         <option value="AODV">AODV</option>
                         <option value="DSDV">DSDV</option>
                         <option value="DSR">DSR</option>
-                        <option value="all">Compare All</option>
+                        <option value="OLSR">OLSR</option>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary">Run Simulation</button>
-            </form>
-        </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label">Number of Nodes</label>
+                        <input type="number" id="numNodes" class="form-control" value="30" min="5" max="100">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Simulation Time (s)</label>
+                        <input type="number" id="simTime" class="form-control" value="60" min="10" max="300">
+                    </div>
+                </div>
 
-        <div id="results" class="mt-4" style="display:none;">
-            <h3>Simulation Results ✨</h3>
-            <div class="alert alert-info" id="mlPrediction"></div>
-            <div id="resultCards" class="row"></div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Node Speed (m/s)</label>
+                        <input type="number" id="nodeSpeed" class="form-control" value="5" min="1" max="30">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Pause Time (s)</label>
+                        <input type="number" id="pauseTime" class="form-control" value="2" min="0" max="30">
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <label class="form-label">TX Range (m)</label>
+                        <input type="number" id="txRange" class="form-control" value="150" min="50" max="300">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Traffic Load (pkt/s)</label>
+                        <input type="number" id="trafficLoad" class="form-control" value="10" min="1" max="50">
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <button id="btnPredict" class="btn btn-info">
+                        <i class="fas fa-brain"></i> Recommend Protocol
+                    </button>
+                    <button id="btnStart" class="btn btn-success">
+                        <i class="fas fa-play"></i> Start Simulation
+                    </button>
+                    <button id="btnStop" class="btn btn-danger" disabled>
+                        <i class="fas fa-stop"></i> Stop
+                    </button>
+                </div>
+                
+                <hr>
+                
+                <h4>ML Protocol Recommendation</h4>
+                <div id="predictionResult" class="alert alert-info">
+                    Run prediction to see recommended protocol
+                </div>
+                
+                <hr>
+                
+                <h4>Simulation History</h4>
+                <div id="historyList" class="list-group"></div>
+            </div>
+            
+            <!-- Visualization Area -->
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-12 p-0">
+                        <div id="network-canvas" style="height: 400px; border: 1px solid #ddd;"></div>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">Packet Delivery Ratio</div>
+                            <div class="card-body">
+                                <canvas id="pdrChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">End-to-End Delay (ms)</div>
+                            <div class="card-body">
+                                <canvas id="delayChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">Throughput (kbps)</div>
+                            <div class="card-body">
+                                <canvas id="throughputChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">Energy Consumption</div>
+                            <div class="card-body">
+                                <canvas id="energyChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">Node Battery Levels</div>
+                            <div class="card-body">
+                                <canvas id="batteryChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>

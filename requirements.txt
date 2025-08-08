@@ -1,9 +1,0 @@
-# requirements.txt
-flask
-simpy
-numpy
-pandas
-scikit-learn
-joblib
-matplotlib
-networkx

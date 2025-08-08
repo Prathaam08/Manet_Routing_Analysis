@@ -1,0 +1,82 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    padding: 0;
+    margin: 0;
+}
+
+.container-fluid {
+    height: 100vh;
+    padding: 0;
+}
+
+#network-canvas {
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.card {
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    height: 100%;
+}
+
+.card-header {
+    font-weight: bold;
+    background-color: #f1f5f9;
+}
+
+/* Add this to fix chart container heights */
+.card-body {
+    position: relative;
+    height: 200px; /* Fixed height for all chart containers */
+}
+
+.chart-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+
+.list-group-item {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.list-group-item:hover {
+    background-color: #e9ecef;
+}
+
+.btn {
+    margin-right: 5px;
+}
+
+.alert {
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+.chart-container {
+    position: relative;
+    height: 200px;
+    width: 100%;
+}
+
+.simulation-card {
+    background-color: #e2f0ff;
+    border-left: 4px solid #0d6efd;
+}
+
+.simulation-card .protocol {
+    font-weight: bold;
+    color: #0d6efd;
+}
+
+.simulation-card .metrics span {
+    display: inline-block;
+    margin-right: 15px;
+    font-size: 0.9rem;
+}

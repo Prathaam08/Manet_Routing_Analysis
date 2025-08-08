@@ -1,56 +1,112 @@
-from flask import Flask, render_template, request, jsonify
-from simulation.simulator import run_simulation
-from ml_model.predictor import predict_protocol
+from flask import Flask, render_template, jsonify, request
+from flask_socketio import SocketIO
+from simulation_engine.simulator import MANETSimulator
+from ml_module.predictor import ProtocolPredictor
+import threading
 import os
+import json
+import time
+from simulation_engine.config import stop_simulation,reset
 
 app = Flask(__name__)
+socketio = SocketIO(app)
+simulator = None
+sim_thread = None
+predictor = ProtocolPredictor('ml_module/model.pkl')
 
-# Ensure a directory for saving plots exists
-if not os.path.exists('static/results'):
-    os.makedirs('static/results')
+# Add at the top of the file
+simulator = None
+sim_thread = None
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/simulate', methods=['POST'])
-def simulate():
-    params = request.get_json()
+@app.route('/start_simulation', methods=['POST'])
+def start_simulation():
+    global simulator, sim_thread
+    config = request.json
+
+    # Reset stop flag
+    reset()
     
-    # --- ML Prediction Step ---
-    # ✅ Get all 5 features directly from the GUI request
-    features = [
-        int(params.get('num_nodes')),
-        int(params.get('area')),
-        int(params.get('mobility')),
-        int(params.get('traffic_load')),
-        int(params.get('energy'))
-    ]
-    predicted_protocol = predict_protocol(features)
-
-    # --- Simulation Step ---
-    # Extract parameters needed for the simulation function
-    num_nodes = int(params.get('num_nodes'))
-    area = int(params.get('area'))
-    sim_time = int(params.get('sim_time'))
-    protocol_choice = params.get('protocol')
+    # Stop existing simulation if running
+    if simulator and sim_thread and sim_thread.is_alive():
+        stop_simulation = True
+        sim_thread.join(timeout=1.0)
     
-    if protocol_choice == 'ml_predict':
-        protocols_to_run = [predicted_protocol]
-    elif protocol_choice == 'all':
-        protocols_to_run = ['AODV', 'DSDV', 'DSR']
-    else:
-        protocols_to_run = [protocol_choice]
+    # Use areaSize parameter
+    area_size_val = config.get('areaSize', 1000)
+    area_size = (area_size_val, area_size_val)
+    
+    # Initialize new simulation
+    simulator = MANETSimulator(
+        num_nodes=config['numNodes'],
+        area_size=area_size,
+        protocol=config['protocol'],
+        sim_time=config['simTime'],
+        traffic_load=config.get('trafficLoad', 10),
+        node_speed=config.get('nodeSpeed', 5),
+        tx_range=config.get('txRange', 100),
+        pause_time=config.get('pauseTime', 2)
+    )
+    
+    # Start simulation in background thread
+    sim_thread = threading.Thread(target=run_simulation, args=(socketio, simulator))
+    sim_thread.daemon = True
+    sim_thread.start()
+    
+    return jsonify({"status": "started"})
 
-    results = {}
-    for proto in protocols_to_run:
-        metrics, plot_path = run_simulation(num_nodes, (area, area), sim_time, proto)
-        results[proto] = {'metrics': metrics, 'plot_path': plot_path}
+def run_simulation(sio, sim):
+    try:
+        for event in sim.run():
+            if stop_simulation:
+                print("Simulation stopped by user")
+                sio.emit('sim_stopped', {'message': 'Simulation stopped by user'})
+                return
+                
+            sio.emit('sim_update', event)
+            if event.get('type') == 'final_metrics':
+                sio.emit('sim_complete', event)
+    except Exception as e:
+        print(f"Simulation error: {str(e)}")
+        sio.emit('sim_error', {'error': str(e)})
 
-    return jsonify({
-        'predicted_protocol': predicted_protocol,
-        'simulation_results': results
+@app.route('/stop_simulation', methods=['POST'])
+def stop_simulation_route():
+    from simulation_engine import config
+    config.stop_simulation = True
+    return jsonify({"status": "stopping"})
+
+
+@app.route('/predict_protocol', methods=['POST'])
+def predict_protocol():
+    params = request.json
+    prediction = predictor.predict({
+        'NumNodes': params['numNodes'],
+        'NodeSpeed': params['nodeSpeed'],
+        'AreaSize': params['areaSize'],
+        'TrafficLoad': params['trafficLoad'],
+        'TxRange': params['txRange']
     })
+    return jsonify({"protocol": prediction})
+
+@app.route('/get_history')
+def get_history():
+    simulations = []
+    sim_dir = 'data/simulations'
+    if not os.path.exists(sim_dir):
+        os.makedirs(sim_dir, exist_ok=True)
+    for file in os.listdir(sim_dir):
+        if file.endswith('.json'):
+            with open(os.path.join(sim_dir, file)) as f:
+                try:
+                    simulations.append(json.load(f))
+                except:
+                    pass
+    return jsonify(simulations)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    os.makedirs('data/simulations', exist_ok=True)
+    socketio.run(app, debug=True)
