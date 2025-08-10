@@ -1,7 +1,8 @@
+# simulation_engine/manet_models.py
+
 import math
 import numpy as np
 import random
-from .config import stop_simulation ,reset # Import the shared stop flag
 
 class Node:
     def __init__(self, id, position, area_size, speed=10, pause_time=5, tx_range=100):
@@ -13,33 +14,39 @@ class Node:
         self.tx_range = tx_range
         self.neighbors = []
         self.routing_table = {}
-        self.energy = 100  # Initial energy in Joules
+        self.energy = 100.0  # Initial energy in Joules
         self.energy_used = 0.0
         self.direction = np.array([random.uniform(-1, 1), random.uniform(-1, 1)])
         norm = np.linalg.norm(self.direction)
         if norm > 0:
             self.direction /= norm
         self.move_timer = 0
-        
+        self.simulator = None
+        self.routing_handler_running = False
+
     def move(self, env):
+        """SimPy process: move the node and periodically update neighbor list."""
         while True:
-            if stop_simulation:  # Add stop condition
+            if hasattr(self, 'simulator') and getattr(self.simulator, 'stop_flag', False):
                 return
-            # Set new random direction and duration
+
+            # New random direction
             self.direction = np.array([random.uniform(-1, 1), random.uniform(-1, 1)])
             norm = np.linalg.norm(self.direction)
             if norm > 0:
                 self.direction /= norm
-            
+
             move_duration = self.pause_time
-            
-            # Move for the duration
             start_time = env.now
+
             while env.now - start_time < move_duration:
+                if hasattr(self, 'simulator') and getattr(self.simulator, 'stop_flag', False):
+                    return
+
                 # Update position
-                self.position += self.direction * self.speed * 0.1  # Small time step
-                
-                # Boundary check with bounce
+                self.position += self.direction * self.speed * 0.1
+
+                # Boundary bounce
                 for i in range(2):
                     if self.position[i] < 0:
                         self.position[i] = 0
@@ -47,22 +54,70 @@ class Node:
                     elif self.position[i] > self.area_size[i]:
                         self.position[i] = self.area_size[i]
                         self.direction[i] = -abs(self.direction[i])
-                
-                # Consume energy during movement
+
+                # Consume energy
                 self.consume_energy(0.01 * self.speed)
+
+                # Update neighbors based on range
+                self.update_neighbors()
+
                 yield env.timeout(0.1)
-            
-            # Pause at destination
+
             yield env.timeout(self.pause_time)
-    
+
+    def update_neighbors(self):
+        """Recompute neighbor list based on current positions and tx_range."""
+        if not self.simulator:
+            return
+        self.neighbors.clear()
+        for node in self.simulator.nodes:
+            if node.id != self.id and self.distance_to(node) <= self.tx_range:
+                self.neighbors.append(node)
+
     def distance_to(self, other_node):
         return np.linalg.norm(self.position - other_node.position)
-    
+
     def consume_energy(self, amount):
         self.energy -= amount
         self.energy_used += amount
         if self.energy < 0:
             self.energy = 0
+
+    def receive(self, packet):
+        """Handle a packet arriving at this node."""
+        yield self.simulator.env.timeout(0.001)  # small processing delay
+
+        # If destination → mark delivery
+        if packet.dst_id == self.id:
+            packet.delivery_time = self.simulator.env.now
+            self.simulator.metrics['packets_received'] += 1
+            self.simulator.interval_metrics['packets_received'] += 1
+            delay = packet.delivery_time - packet.creation_time
+            self.simulator.metrics['total_delay'] += delay
+            self.simulator.interval_metrics['total_delay'] += delay
+            return
+
+        # Forward packet if route exists
+        routing = self.simulator.routing
+        next_hop = routing.get_next_hop(self.id, packet.dst_id)
+        if next_hop is not None:
+            packet.hops.append(self.id)
+            packet.last_hop = self.id
+            self.simulator.env.process(next_hop.receive(packet))
+        else:
+            # No route — put in queue for routing protocol
+            routing.packet_queue[self.id].append(packet)
+
+            # Start handler if not already running
+            if not self.routing_handler_running:
+                self.routing_handler_running = True
+
+                def _handler_wrapper():
+                    yield from routing._handle_packets(self)
+                    self.routing_handler_running = False
+
+                self.simulator.env.process(_handler_wrapper())
+
 
 class Packet:
     def __init__(self, src_id, dst_id, creation_time, size=512):
