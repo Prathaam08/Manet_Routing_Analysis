@@ -104,14 +104,15 @@ def stop_simulation_route():
 @app.route('/predict_protocol', methods=['POST'])
 def predict_protocol():
     params = request.json
-    prediction = predictor.predict({
+    prediction,confidence = predictor.predict({
         'NumNodes': params['numNodes'],
         'NodeSpeed': params['nodeSpeed'],
         'AreaSize': params['areaSize'],
         'TrafficLoad': params['trafficLoad'],
         'TxRange': params['txRange']
     })
-    return jsonify({"protocol": prediction})
+    return jsonify({"protocol": prediction,
+                     "confidence": round(confidence, 3) })
 
 @app.route('/get_history')
 def get_history():

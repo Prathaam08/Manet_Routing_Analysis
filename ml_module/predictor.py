@@ -15,8 +15,13 @@ class ProtocolPredictor:
         }
     
     def predict(self, features):
-        # Create input in correct order
         input_data = [features[k] for k in self.feature_names]
         input_df = pd.DataFrame([input_data], columns=self.feature_names)
-        prediction = self.model.predict(input_df)[0]
-        return self.protocol_map.get(prediction, 'AODV')
+        
+        pred_class = self.model.predict(input_df)[0]
+        pred_proba = self.model.predict_proba(input_df)[0]  # array of probabilities for each class
+        
+        confidence = np.max(pred_proba)  # highest probability among classes
+        
+        protocol = self.protocol_map.get(pred_class, 'AODV')
+        return protocol, confidence

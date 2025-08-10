@@ -197,6 +197,7 @@ function predictProtocol() {
     .then((data) => {
       document.getElementById("predictionResult").innerHTML = `
                 Recommended protocol: <strong>${data.protocol}</strong>
+                (Confidence: ${(data.confidence * 100).toFixed(1)}%)
                 <button class="btn btn-sm btn-success ms-2"
                         onclick="document.getElementById('protocol').value='${data.protocol}'">
                     Use This

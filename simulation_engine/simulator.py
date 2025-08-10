@@ -114,7 +114,7 @@ class MANETSimulator:
         # simulation loop with periodic metric emissions
         self.start_time = self.env.now
         last_update = 0
-        update_interval = 0.5  # seconds (simulated)
+        update_interval = 1  # seconds (simulated)
 
         while True:
             # if no more events scheduled, break
