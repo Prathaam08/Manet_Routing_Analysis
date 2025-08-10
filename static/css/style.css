@@ -1,82 +1,154 @@
+/* ===== GENERAL PAGE STYLES ===== */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f8f9fa;
-    padding: 0;
+    background: linear-gradient(135deg, #f4f8fb, #e9f0f7);
+    color: #333;
     margin: 0;
-}
-
-.container-fluid {
-    height: 100vh;
     padding: 0;
 }
 
-#network-canvas {
-    background-color: white;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+/* ===== CONTROL PANEL ===== */
+.control-panel {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
 
+.control-panel h2 {
+    font-size: 1.5rem;
+    color: #0d6efd;
+    display: flex;
+    align-items: center;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #555;
+}
+
+/* Input & Select Styling */
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    transition: all 0.2s ease-in-out;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 5px rgba(13, 110, 253, 0.3);
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.btn-info {
+    background-color: #0dcaf0;
+    border: none;
+}
+.btn-info:hover {
+    background-color: #0bb3d6;
+}
+
+.btn-success {
+    background-color: #198754;
+    border: none;
+}
+.btn-success:hover {
+    background-color: #157347;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border: none;
+}
+.btn-danger:hover {
+    background-color: #bb2d3b;
+}
+
+/* ===== STATUS BOX ===== */
+#simulationStatus {
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+/* ===== HISTORY LIST ===== */
+.history-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fdfdfd;
+}
+
+.history-list .list-group-item {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.history-list .list-group-item:hover {
+    background-color: #f1f5f9;
+}
+
+/* ===== CARDS ===== */
 .card {
-    margin-bottom: 20px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    height: 100%;
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    transition: all 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
 .card-header {
     font-weight: bold;
-    background-color: #f1f5f9;
+    background-color: #f8fafc;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 1rem;
 }
 
-/* Add this to fix chart container heights */
+/* ===== NETWORK CANVAS ===== */
+.network-canvas {
+    height: 400px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+}
+
+/* ===== CHARTS ===== */
 .card-body {
     position: relative;
-    height: 200px; /* Fixed height for all chart containers */
-}
-
-.chart-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
-
-
-.list-group-item {
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.list-group-item:hover {
-    background-color: #e9ecef;
-}
-
-.btn {
-    margin-right: 5px;
-}
-
-.alert {
+    height: 400px;
     padding: 10px;
-    margin-bottom: 15px;
 }
 
 .chart-container {
     position: relative;
-    height: 200px;
+    height: 100%;
     width: 100%;
 }
 
-.simulation-card {
-    background-color: #e2f0ff;
-    border-left: 4px solid #0d6efd;
+/* ===== SCROLLBAR CUSTOMIZATION ===== */
+::-webkit-scrollbar {
+    width: 6px;
 }
-
-.simulation-card .protocol {
-    font-weight: bold;
-    color: #0d6efd;
+::-webkit-scrollbar-thumb {
+    background: #bbb;
+    border-radius: 3px;
 }
-
-.simulation-card .metrics span {
-    display: inline-block;
-    margin-right: 15px;
-    font-size: 0.9rem;
+::-webkit-scrollbar-thumb:hover {
+    background: #999;
 }

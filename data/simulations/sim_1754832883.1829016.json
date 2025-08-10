@@ -1,0 +1,1 @@
+{"type": "final_metrics", "pdr": 0.09333333333333334, "avg_delay": 3.259464285712547, "throughput": 0.0, "overhead": 4452, "energy": 461.4000000000025, "sim_time": 60, "protocol": "AODV", "timestamp": "2025-08-10 19:04:43"}

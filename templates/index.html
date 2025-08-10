@@ -15,7 +15,7 @@
         <div class="row g-3">
             
             <!-- Control Panel -->
-            <div class="col-lg-4 col-md-5 bg-light p-4 border rounded shadow-sm">
+            <div class="col-lg-4 col-md-5 control-panel">
                 <h2 class="mb-3">
                     <i class="fas fa-sliders-h me-2"></i>Simulation Controls
                 </h2>
@@ -95,7 +95,7 @@
 
                 <!-- History -->
                 <h4>Simulation History</h4>
-                <div id="historyList" class="list-group small" style="max-height: 200px; overflow-y: auto;">
+                <div id="historyList" class="list-group small history-list">
                     <div class="text-muted small text-center">No history yet</div>
                 </div>
             </div>
@@ -105,9 +105,7 @@
                 <div class="card shadow-sm mb-3">
                     <div class="card-header fw-bold">Network Topology</div>
                     <div class="card-body p-0">
-                        <div id="network-canvas" style="height: 400px; border: 1px solid #ddd; background: #fafafa;">
-                            <div class="text-center text-muted p-5">Simulation not started yet</div>
-                        </div>
+                        <div id="network-canvas" class="network-canvas"></div>
                     </div>
                 </div>
 

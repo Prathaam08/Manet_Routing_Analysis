@@ -18,31 +18,37 @@ function initNetwork(containerId) {
 }
 
 function updateNetworkVisualization(network, data) {
-    // Clear existing elements
+    // clear
     network.svg.selectAll("*").remove();
-    
-    // Extract nodes and links from simulation state
-    const nodes = data.nodes.map(node => ({
-        id: node.id,
-        x: node.position[0] * network.width / data.areaSize[0],
-        y: node.position[1] * network.height / data.areaSize[1],
-        energy: node.energy
-    }));
-    
-    const links = [];
-    data.links.forEach(link => {
-        const source = nodes.find(n => n.id === link.source);
-        const target = nodes.find(n => n.id === link.target);
-        if (source && target) {
-            links.push({source, target});
+
+    // map nodes: support either {x,y} or {position: [x,y]}
+    const nodes = data.nodes.map(node => {
+        let x = node.x, y = node.y;
+        if (typeof x === 'undefined' && node.position && node.position.length >= 2) {
+            x = node.position[0];
+            y = node.position[1];
         }
+        // normalize to canvas coordinates
+        const nx = x * network.width / data.areaSize[0];
+        const ny = y * network.height / data.areaSize[1];
+        return { id: node.id, x: nx, y: ny, energy: node.energy };
     });
-    
-    // Draw links
+
+    // index by id for quick lookup
+    const nodeById = {};
+    nodes.forEach(n => nodeById[n.id] = n);
+
+    const links = [];
+    (data.links || []).forEach(link => {
+        const s = nodeById[link.source];
+        const t = nodeById[link.target];
+        if (s && t) links.push({ source: s, target: t });
+    });
+
+    // draw links
     network.svg.selectAll(".link")
         .data(links)
-        .enter()
-        .append("line")
+        .join("line")
         .attr("class", "link")
         .attr("x1", d => d.source.x)
         .attr("y1", d => d.source.y)
@@ -51,33 +57,27 @@ function updateNetworkVisualization(network, data) {
         .attr("stroke", "#999")
         .attr("stroke-opacity", 0.6)
         .attr("stroke-width", 1.5);
-    
-    // Draw nodes
-    const nodeGroups = network.svg.selectAll(".node")
-        .data(nodes)
-        .enter()
-        .append("g")
+
+    // nodes
+    const nodeG = network.svg.selectAll(".node")
+        .data(nodes, d => d.id)
+        .join("g")
         .attr("class", "node")
         .attr("transform", d => `translate(${d.x},${d.y})`);
-    
-    nodeGroups.append("circle")
+
+    nodeG.append("circle")
         .attr("r", 10)
-        .attr("fill", d => {
-            if (d.energy > 70) return "#4CAF50"; // Green
-            if (d.energy > 30) return "#FFC107"; // Yellow
-            return "#F44336"; // Red
-        })
+        .attr("fill", d => d.energy > 70 ? "#4CAF50" : d.energy > 30 ? "#FFC107" : "#F44336")
         .attr("stroke", "#333")
         .attr("stroke-width", 1);
-    
-    nodeGroups.append("text")
+
+    nodeG.append("text")
         .attr("dy", 4)
         .attr("text-anchor", "middle")
         .attr("font-size", "10px")
         .attr("fill", "white")
         .text(d => d.id);
-    
-    // Update network state
+
     network.nodes = nodes;
     network.links = links;
 }
