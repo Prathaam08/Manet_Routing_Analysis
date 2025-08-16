@@ -85,9 +85,11 @@ function initChart(canvasId, type, bgColor, yLabel) {
                 }
               })
             : bgColor,
-          borderWidth: 1,
-          fill: false,
-          tension: 0.1,
+          borderWidth: 2,
+          fill : false,
+          tension: 0.4, // smoother curves (0.4 is natural-looking)
+          showLine: true, // ensures curves render even with numeric x values
+          pointRadius: 0,
         },
       ],
     },
@@ -148,7 +150,6 @@ function startSimulation() {
     chart.update();
   });
 
-
   fetch("/start_simulation", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -199,7 +200,9 @@ function predictProtocol() {
                 Recommended protocol: <strong>${data.protocol}</strong>
                 (Confidence: ${(data.confidence * 100).toFixed(1)}%)
                 <button class="btn btn-sm btn-success ms-2"
-                        onclick="document.getElementById('protocol').value='${data.protocol}'">
+                        onclick="document.getElementById('protocol').value='${
+                          data.protocol
+                        }'">
                     Use This
                 </button>
             `;
@@ -207,21 +210,24 @@ function predictProtocol() {
 }
 
 function handleSimulationUpdate(data) {
-    // if run_id present and not equal to current, ignore update
-    if (window.currentRunId && data.run_id && data.run_id !== window.currentRunId) {
-        // stale update, ignore
-        return;
-    }
-    if (data.type === 'metrics') {
-        updateChart(charts.pdr, data.time, data.pdr);
-        updateChart(charts.delay, data.time, data.delay);
-        updateChart(charts.throughput, data.time, data.throughput);
-        updateChart(charts.energy, data.time, data.energy);
-        updateBatteryChart(charts.battery, data.nodes);
-        updateNetworkVisualization(data);
-    }
+  // if run_id present and not equal to current, ignore update
+  if (
+    window.currentRunId &&
+    data.run_id &&
+    data.run_id !== window.currentRunId
+  ) {
+    // stale update, ignore
+    return;
+  }
+  if (data.type === "metrics") {
+    updateChart(charts.pdr, data.time, data.pdr);
+    updateChart(charts.delay, data.time, data.delay);
+    updateChart(charts.throughput, data.time, data.throughput);
+    updateChart(charts.energy, data.time, data.energy);
+    updateBatteryChart(charts.battery, data.nodes);
+    updateNetworkVisualization(data);
+  }
 }
-
 
 function handleSimulationComplete(data) {
   simulationRunning = false;
