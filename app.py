@@ -10,6 +10,7 @@ import time
 from uuid import uuid4
 from simulation_engine import config  # use the module to set flags
 
+
 app = Flask(__name__)
 socketio = SocketIO(app)
 simulator = None
@@ -101,6 +102,10 @@ def stop_simulation_route():
     config.set_stop()
     return jsonify({"status": "stopping"})
 
+
+
+# this is main-------------------------------------------------------------
+
 @app.route('/predict_protocol', methods=['POST'])
 def predict_protocol():
     params = request.json
@@ -113,6 +118,11 @@ def predict_protocol():
     })
     return jsonify({"protocol": prediction,
                      "confidence": round(confidence, 3) })
+
+# ----------------------------------------------
+
+
+
 
 @app.route('/get_history')
 def get_history():
@@ -132,3 +142,4 @@ def get_history():
 if __name__ == '__main__':
     os.makedirs('data/simulations', exist_ok=True)
     socketio.run(app, debug=True)
+

@@ -1,28 +1,84 @@
+# import pandas as pd
+# from sklearn.ensemble import RandomForestClassifier
+# from sklearn.model_selection import train_test_split
+# import joblib
+# import os
+
+# def train_model(dataset_path='data/datasets/dataset.csv'):
+#     df = pd.read_csv(dataset_path)
+    
+#     # Preprocessing
+#     X = df[['NumNodes', 'NodeSpeed', 'AreaSize', 'TrafficLoad', 'TxRange']]
+#     y = df['PerformanceClass']  # 0=Poor, 1=Fair, 2=Good, 3=Excellent
+    
+#     # Train-test split
+#     X_train, X_test, y_train, y_test = train_test_split(
+#         X, y, test_size=0.2, random_state=42
+#     )
+    
+#     # Train model
+#     model = RandomForestClassifier(n_estimators=100, random_state=42)
+#     model.fit(X_train, y_train)
+    
+#     # Evaluate
+#     accuracy = model.score(X_test, y_test)
+#     print(f"Model accuracy: {accuracy:.2f}")
+    
+#     # Save model with feature names
+#     model_data = {
+#         'model': model,
+#         'feature_names': list(X.columns)
+#     }
+#     os.makedirs('ml_module', exist_ok=True)
+#     joblib.dump(model_data, 'ml_module/model.pkl')
+#     print("Model saved to ml_module/model.pkl")
+
+# if __name__ == '__main__':
+#     train_model()
+
+
+
+
+
+
+
+
+# ---------------------------------------
+
+
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
 import joblib
 import os
 
-def train_model(dataset_path='data/datasets/dataset1.csv'):
+def train_model(dataset_path='data/datasets/dataset.csv'):
     df = pd.read_csv(dataset_path)
     
-    # Preprocessing
+    # Features
     X = df[['NumNodes', 'NodeSpeed', 'AreaSize', 'TrafficLoad', 'TxRange']]
-    y = df['PerformanceClass']  # 0=Poor, 1=Fair, 2=Good, 3=Excellent
     
-    # Train-test split
+    # 🎯 Target: Protocol (AODV, DSDV, OLSR)
+    y = df['Protocol']
+    
+    # Train-test split (stratified)
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
+        X, y, test_size=0.2, random_state=42, stratify=y
     )
     
     # Train model
-    model = RandomForestClassifier(n_estimators=100, random_state=42)
+    model = RandomForestClassifier(
+        n_estimators=200,
+        random_state=42,
+        class_weight="balanced"
+    )
     model.fit(X_train, y_train)
     
     # Evaluate
-    accuracy = model.score(X_test, y_test)
-    print(f"Model accuracy: {accuracy:.2f}")
+    y_pred = model.predict(X_test)
+    print("Classification Report:")
+    print(classification_report(y_test, y_pred))
     
     # Save model with feature names
     model_data = {
@@ -31,7 +87,74 @@ def train_model(dataset_path='data/datasets/dataset1.csv'):
     }
     os.makedirs('ml_module', exist_ok=True)
     joblib.dump(model_data, 'ml_module/model.pkl')
-    print("Model saved to ml_module/model.pkl")
+    print("✅ Model saved to ml_module/model.pkl")
 
 if __name__ == '__main__':
     train_model()
+
+
+
+
+
+
+
+
+
+
+
+
+
+# # ------------------------------ using pdr,theoyghput,delay
+# import pandas as pd
+# from sklearn.ensemble import RandomForestClassifier
+# from sklearn.model_selection import train_test_split
+# from sklearn.metrics import classification_report
+# import joblib
+# import os
+
+# def train_model(dataset_path='data/datasets/dataset.csv'):
+#     df = pd.read_csv(dataset_path)
+
+#     # 🎯 Use performance metrics as features
+#     feature_cols = [
+#         'PDR',
+#         'Throughput (kbps)',
+#         'AvgDelay (ms)',
+#         'LossRate',
+#         'RoutingOverhead',
+#         'EnergyUsed (J)'
+#     ]
+#     X = df[feature_cols]
+
+#     # Target: Protocol
+#     y = df['Protocol']
+
+#     # Train-test split (stratified so each protocol is balanced)
+#     X_train, X_test, y_train, y_test = train_test_split(
+#         X, y, test_size=0.2, random_state=42, stratify=y
+#     )
+
+#     # Train model
+#     model = RandomForestClassifier(
+#         n_estimators=300,
+#         random_state=42,
+#         class_weight="balanced"
+#     )
+#     model.fit(X_train, y_train)
+
+#     # Evaluate
+#     y_pred = model.predict(X_test)
+#     print("Classification Report:")
+#     print(classification_report(y_test, y_pred))
+
+#     # Save model with feature names
+#     model_data = {
+#         'model': model,
+#         'feature_names': feature_cols
+#     }
+#     os.makedirs('ml_module', exist_ok=True)
+#     joblib.dump(model_data, 'ml_module/model.pkl')
+#     print("✅ Model saved to ml_module/model.pkl")
+
+# if __name__ == '__main__':
+#     train_model()
