@@ -143,3 +143,4 @@ if __name__ == '__main__':
     os.makedirs('data/simulations', exist_ok=True)
     socketio.run(app, debug=True)
 
+

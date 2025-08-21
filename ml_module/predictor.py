@@ -39,28 +39,3 @@ class ProtocolPredictor:
 
 
 
-
-
-import joblib
-import numpy as np
-import pandas as pd
-
-class ProtocolPredictor:
-    def __init__(self, model_path):
-        model_data = joblib.load(model_path)
-        self.model = model_data['model']
-        self.feature_names = model_data['feature_names']
-    
-    def predict(self, features):
-        input_data = [features[k] for k in self.feature_names]
-        input_df = pd.DataFrame([input_data], columns=self.feature_names)
-        
-        pred_class = self.model.predict(input_df)[0]  # Already returns "AODV", "DSDV", etc.
-        pred_proba = self.model.predict_proba(input_df)[0]
-        
-        confidence = np.max(pred_proba)
-        
-        return pred_class, confidence
-
-
-
